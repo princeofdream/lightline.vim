@@ -10,6 +10,13 @@ set cpo&vim
 
 let s:_ = 1 " 1: uninitialized, 2: disabled
 
+let s:bufPathSignDict = {}
+let s:bufNameSignDict = {}
+let s:bufNameUniDict = {}
+let s:bufNameLenDict  = {}
+let s:bufNameDupDict  = {}
+let s:bufNameList     = ""
+
 function! lightline#update() abort
   if &buftype ==# 'popup' | return | endif
   if s:_
@@ -110,6 +117,7 @@ let s:_lightline = {
       \     'paste': '%{&paste?"PASTE":""}', 'readonly': '%R', 'charvalue': '%b', 'charvaluehex': '%B',
       \     'spell': '%{&spell?&spelllang:""}', 'fileencoding': '%{&fenc!=#""?&fenc:&enc}', 'fileformat': '%{&ff}',
       \     'filetype': '%{&ft!=#""?&ft:"no ft"}', 'percent': '%3p%%', 'percentwin': '%P',
+      \     'buffers': '%{lightline#buffers()}',
       \     'lineinfo': '%3l:%-2v', 'line': '%l', 'column': '%c', 'close': '%999X X ', 'winnr': '%{winnr()}'
       \   },
       \   'component_visible_condition': {
@@ -500,6 +508,18 @@ function! lightline#error(msg) abort
   echohl ErrorMsg
   echomsg 'lightline.vim: '.a:msg
   echohl None
+endfunction
+
+function! lightline#buffers()
+	let l:buf_count=bufnr('$')
+	let l:active_buf_num=bufnr('')
+	let l:ful_buf_name=expand( '#' . l:active_buf_num . ':p')
+	" let l:ful_buf_name= '[*' . l:active_buf_num . ': ' . l:ful_buf_name . ']'
+	let l:ful_buf_name= '[*' . l:active_buf_num . ':' . bufname(l:active_buf_num) . ']'
+	let l:exp_buf_name=expand( '#' . l:active_buf_num . ':p:t')
+	let var = l:exp_buf_name
+	let var = l:ful_buf_name
+	return var
 endfunction
 
 let &cpo = s:save_cpo
